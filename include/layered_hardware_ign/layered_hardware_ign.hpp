@@ -68,6 +68,7 @@ public:
         // load layer as a normal (non-ignition) layer
         const std::string layer_disp_name =
             "\"" + layer_names[i] + "\" non-ignition layer (" + layer_types[i] + ")";
+        LHI_INFO("LayeredHardwareIgnition::initSim(): Loading %s", layer_disp_name.c_str());
         std::unique_ptr<lh::LayerInterface> layer;
         try {
           layer.reset(layer_loader_.createUnmanagedInstance(layer_types[i]));
@@ -89,6 +90,7 @@ public:
         // load layer as an ignition layer
         const std::string layer_disp_name =
             "\"" + layer_names[i] + "\" ignition layer (" + layer_types[i] + ")";
+        LHI_INFO("LayeredHardwareIgnition::initSim(): Loading %s", layer_disp_name.c_str());
         std::unique_ptr<IgnitionLayerInterface> layer;
         try {
           layer.reset(ign_layer_loader_.createUnmanagedInstance(layer_types[i]));
