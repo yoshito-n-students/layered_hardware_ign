@@ -28,16 +28,10 @@ namespace layered_hardware_ign {
 
 class IgnitionJointLayer : public IgnitionLayerInterface {
 public:
-  virtual bool initSim(const std::string &layer_name, rclcpp::Node::SharedPtr &model_nh,
+  virtual bool initSim(const std::string &layer_name, rclcpp::Node::SharedPtr & /*model_nh*/,
                        std::map<std::string, ig::Entity> &joint_entities,
                        const hi::HardwareInfo &hardware_info, ig::EntityComponentManager &ecm,
-                       int &update_rate) override {
-    // initialize the base class first
-    if (!IgnitionLayerInterface::initSim(layer_name, model_nh, joint_entities, hardware_info, ecm,
-                                         update_rate)) {
-      return false;
-    }
-
+                       int & /*update_rate*/) override {
     // find parameter group for this layer
     const auto params_it = hardware_info.hardware_parameters.find(layer_name);
     if (params_it == hardware_info.hardware_parameters.end()) {
