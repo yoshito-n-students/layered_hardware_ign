@@ -23,15 +23,13 @@ find_package(ignition-gazebo6 REQUIRED)
 add_library(
   layered_hardware_ign_plugins SHARED
   src/layered_hardware_ign_plugins.cpp)
-target_include_directories(layered_hardware_ign_plugins
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-)
+target_include_directories(
+  layered_hardware_ign_plugins PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 target_link_libraries(
   layered_hardware_ign_plugins
-  ignition-gazebo6::core
-)
+  ignition-gazebo6::core)
 ament_target_dependencies(
   layered_hardware_ign_plugins
   controller_interface
@@ -53,8 +51,8 @@ install(
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
 install(
-    DIRECTORY config launch urdf
-    DESTINATION share/layered_hardware_ign)
+  DIRECTORY examples
+  DESTINATION share/layered_hardware_ign)
 
 # TODO: declare tests here
 
