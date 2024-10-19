@@ -116,6 +116,20 @@ public:
       }
     }
 
+    // populate command & state interfaces from each layer
+    // (these interfaces are referenced by layers,
+    //  so they must be member variables to match the layers' lifespan)
+    state_interfaces_ = export_state_interfaces();
+    command_interfaces_ = export_command_interfaces();
+
+    // assign state & command interfaces to each layer
+    for (auto &layer : layers_) {
+      layer->assign_interfaces(loan_interfaces<hi::LoanedStateInterface>(
+                                   state_interfaces_, layer->state_interface_configuration()),
+                               loan_interfaces<hi::LoanedCommandInterface>(
+                                   command_interfaces_, layer->command_interface_configuration()));
+    }
+
     return true;
   }
 
