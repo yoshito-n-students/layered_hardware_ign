@@ -3,10 +3,10 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, Regi
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
-
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
+
 
 def generate_launch_description():
     # Declare arguments
@@ -21,7 +21,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "gui",
-            default_value="false",
+            default_value="true",
             description="Start RViz2 automatically with this launch file",
         )
     )
@@ -44,22 +44,12 @@ def generate_launch_description():
             ),
         ]
     )
-    robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}
-
-    # Get controller configs
-    robot_controllers = PathJoinSubstitution(
-        [
-            FindPackageShare("layered_hardware"),
-            "examples/single_actuator/config",
-            "controllers.yaml",
-        ]
-    )
 
     # Get display configs
     rviz_config_file = PathJoinSubstitution(
         [
-            FindPackageShare("layered_hardware"), 
-            "examples/single_actuator/config", 
+            FindPackageShare("layered_hardware"),
+            "examples/single_actuator/config",
             "display_config.rviz"
         ]
     )
@@ -97,7 +87,9 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[robot_description],
+        parameters=[{
+            "robot_description": ParameterValue(robot_description_content, value_type=str),
+            "use_sim_time": use_sim_time}],
     )
     controller_spawner = Node(
         package="controller_manager",
