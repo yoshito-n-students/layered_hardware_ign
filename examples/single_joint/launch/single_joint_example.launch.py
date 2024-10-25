@@ -58,9 +58,9 @@ def generate_launch_description():
     ign_gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
-                FindPackageShare("ros_ign_gazebo"),
+                FindPackageShare("ros_gz_sim"),
                 "launch",
-                "ign_gazebo.launch.py"
+                "gz_sim.launch.py"
             ])
         ]),
         launch_arguments={
