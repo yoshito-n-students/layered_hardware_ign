@@ -64,6 +64,9 @@ def generate_launch_description():
             ])
         ]),
         launch_arguments={
+            # -r: run simulation on start
+            # -s: sever (headless) mode
+            # -v 4: verbosity level 4 (highest)
             "gz_args": "-r -s -v 4 empty.sdf",
         }.items()
     )
