@@ -9,14 +9,17 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <!-- ROS dependencies -->
   <depend>controller_interface</depend>
   <depend>ign_ros2_control</depend>
   <depend>hardware_interface</depend>
   <depend>layered_hardware</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
-  <depend>ignition-gazebo6</depend>
   <depend>yaml_cpp_vendor</depend>
+
+  <!-- System dependencies -->
+  <depend>ignition-gazebo6</depend>
 
   <!-- <test_depend>ament_cmake_gtest</test_depend> -->
   <!-- <test_depend>ament_lint_auto</test_depend> -->

@@ -7,7 +7,7 @@ endif()
 
 # include_directories(include)
 
-# find dependencies
+## Find ROS dependencies
 find_package(ament_cmake REQUIRED)
 find_package(controller_interface REQUIRED)
 find_package(ign_ros2_control REQUIRED)
@@ -15,9 +15,11 @@ find_package(hardware_interface REQUIRED)
 find_package(layered_hardware REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+# yaml_cpp_vendor builds yaml-cpp if not installed
 find_package(yaml_cpp_vendor REQUIRED)
 
 find_package(ignition-gazebo6 REQUIRED)
+find_package(yaml-cpp)
 
 ## Declare a C++ library
 add_library(
@@ -27,9 +29,6 @@ target_include_directories(
   layered_hardware_ign_hardware_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_link_libraries(
-  layered_hardware_ign_hardware_plugins
-  ignition-gazebo6::core)
 ament_target_dependencies(
   layered_hardware_ign_hardware_plugins
   controller_interface
@@ -39,6 +38,10 @@ ament_target_dependencies(
   pluginlib
   rclcpp
   yaml_cpp_vendor)
+target_link_libraries(
+  layered_hardware_ign_hardware_plugins
+  ignition-gazebo6::core
+  ${YAML_CPP_LIBRARIES})
 
 add_library(
   layered_hardware_ign_layer_plugins SHARED
@@ -47,9 +50,6 @@ target_include_directories(
   layered_hardware_ign_layer_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_link_libraries(
-  layered_hardware_ign_layer_plugins
-  ignition-gazebo6::core)
 ament_target_dependencies(
   layered_hardware_ign_layer_plugins
   controller_interface
@@ -59,6 +59,10 @@ ament_target_dependencies(
   pluginlib
   rclcpp
   yaml_cpp_vendor)
+target_link_libraries(
+  layered_hardware_ign_layer_plugins
+  ignition-gazebo6::core
+  ${YAML_CPP_LIBRARIES})
 
 ## Install resources
 pluginlib_export_plugin_description_file(ign_ros2_control hardware_plugins.xml)
