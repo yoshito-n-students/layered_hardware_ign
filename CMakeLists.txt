@@ -21,17 +21,17 @@ find_package(ignition-gazebo6 REQUIRED)
 
 ## Declare a C++ library
 add_library(
-  layered_hardware_ign_plugins SHARED
-  src/layered_hardware_ign_plugins.cpp)
+  layered_hardware_ign_hardware_plugins SHARED
+  src/layered_hardware_ign_hardware_plugins.cpp)
 target_include_directories(
-  layered_hardware_ign_plugins PUBLIC
+  layered_hardware_ign_hardware_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 target_link_libraries(
-  layered_hardware_ign_plugins
+  layered_hardware_ign_hardware_plugins
   ignition-gazebo6::core)
 ament_target_dependencies(
-  layered_hardware_ign_plugins
+  layered_hardware_ign_hardware_plugins
   controller_interface
   ign_ros2_control
   hardware_interface
@@ -40,13 +40,31 @@ ament_target_dependencies(
   rclcpp
   yaml_cpp_vendor)
 
-## Declare a C++ executable
+add_library(
+  layered_hardware_ign_layer_plugins SHARED
+  src/layered_hardware_ign_layer_plugins.cpp)
+target_include_directories(
+  layered_hardware_ign_layer_plugins PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+target_link_libraries(
+  layered_hardware_ign_layer_plugins
+  ignition-gazebo6::core)
+ament_target_dependencies(
+  layered_hardware_ign_layer_plugins
+  controller_interface
+  ign_ros2_control
+  hardware_interface
+  layered_hardware
+  pluginlib
+  rclcpp
+  yaml_cpp_vendor)
 
-pluginlib_export_plugin_description_file(ign_ros2_control plugins.xml)
-pluginlib_export_plugin_description_file(layered_hardware_ign plugins.xml)
-
+## Install resources
+pluginlib_export_plugin_description_file(ign_ros2_control hardware_plugins.xml)
+pluginlib_export_plugin_description_file(layered_hardware_ign layer_plugins.xml)
 install(
-  TARGETS layered_hardware_ign_plugins
+  TARGETS layered_hardware_ign_hardware_plugins layered_hardware_ign_layer_plugins
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)

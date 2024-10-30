@@ -1,0 +1,11 @@
+<library path="layered_hardware_ign_layer_plugins">
+
+  <class name="layered_hardware_ign/IgnitionJointLayer"
+         type="layered_hardware_ign::IgnitionJointLayer"
+         base_class_type="layered_hardware_ign::IgnitionLayerInterface">
+    <description>
+      Hardware layer that handles joints in Ignition simulator
+    </description>
+  </class>  
+
+</library>
