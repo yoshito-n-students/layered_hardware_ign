@@ -1,10 +1,10 @@
-<library path="layered_hardware_ign_layer_plugins">
+<library path="layered_hardware_gz_layer_plugins">
 
-  <class name="layered_hardware_ign/IgnitionJointLayer"
-         type="layered_hardware_ign::IgnitionJointLayer"
-         base_class_type="layered_hardware_ign::IgnitionLayerInterface">
+  <class name="layered_hardware_gz/GazeboSimJointLayer"
+         type="layered_hardware_gz::GazeboSimJointLayer"
+         base_class_type="layered_hardware_gz::GazeboSimLayerInterface">
     <description>
-      Hardware layer that handles joints in Ignition simulator
+      Hardware layer that handles joints in Gazebo simulator
     </description>
   </class>  
 

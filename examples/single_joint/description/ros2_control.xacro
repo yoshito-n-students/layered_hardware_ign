@@ -9,10 +9,10 @@
                   type: layered_hardware/MonitorLayer
                 - name: joint_limits_layer
                   type: layered_hardware/JointLimitsLayer
-                - name: ign_joint_layer
-                  type: layered_hardware_ign/IgnitionJointLayer
+                - name: gz_joint_layer
+                  type: layered_hardware_gz/GazeboJointLayer
             </param>
-            <param name="ign_joint_layer">
+            <param name="gz_joint_layer">
                 joints:
                     axis:
                         operation_mode_map:
@@ -37,7 +37,7 @@
     </ros2_control>
 
     <gazebo>
-        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
             <parameters>$(find layered_hardware)/examples/single_actuator/config/controllers.yaml</parameters>
         </plugin>
     </gazebo>

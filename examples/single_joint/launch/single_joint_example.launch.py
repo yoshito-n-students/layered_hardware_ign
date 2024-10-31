@@ -37,7 +37,7 @@ def generate_launch_description():
             " ",
             PathJoinSubstitution(
                 [
-                    FindPackageShare("layered_hardware_ign"),
+                    FindPackageShare("layered_hardware_gz"),
                     "examples/single_joint/description",
                     "robot_description.urdf.xacro",
                 ]
@@ -55,7 +55,7 @@ def generate_launch_description():
     )
 
     # Declare simulation nodes
-    ign_gazebo_launch = IncludeLaunchDescription(
+    gz_sim_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
                 FindPackageShare("ros_gz_sim"),
@@ -70,7 +70,7 @@ def generate_launch_description():
             "gz_args": "-r -s -v 4 empty.sdf",
         }.items()
     )
-    ign_robot_spawner = Node(
+    gz_sim_robot_spawner = Node(
         package="ros_gz_sim",
         executable="create",
         output="both",
@@ -78,7 +78,7 @@ def generate_launch_description():
                    "-name", "single_joint_example",
                    "-allow_renaming", "true"],
     )
-    ign_bridge = Node(
+    gz_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
         arguments=["/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock"],
@@ -118,9 +118,9 @@ def generate_launch_description():
 
     # Build all nodes
     nodes = [
-        ign_gazebo_launch,
-        ign_robot_spawner,
-        ign_bridge,
+        gz_sim_launch,
+        gz_sim_robot_spawner,
+        gz_bridge,
         robot_state_pub_node,
         controller_spawner,
         sub_controller_spawner,

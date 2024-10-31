@@ -1,21 +1,21 @@
-#ifndef LAYERED_HARDWARE_IGN_IGN_JOINT_CONTEXT_HPP
-#define LAYERED_HARDWARE_IGN_IGN_JOINT_CONTEXT_HPP
+#ifndef LAYERED_HARDWARE_GZ_GZ_JOINT_CONTEXT_HPP
+#define LAYERED_HARDWARE_GZ_GZ_JOINT_CONTEXT_HPP
 
 #include <limits>
 #include <string>
 
-#include <layered_hardware_ign/common_namespaces.hpp>
+#include <layered_hardware_gz/common_namespaces.hpp>
 
-#include <ignition/gazebo/EntityComponentManager.hh>
-#include <ignition/gazebo/Joint.hh>
+#include <gz/sim/EntityComponentManager.hh>
+#include <gz/sim/Joint.hh>
 
-namespace layered_hardware_ign {
+namespace layered_hardware_gz {
 
-struct IgnitionJointContext {
+struct GazeboSimJointContext {
   // handles
   const std::string name;
-  ig::Joint joint;
-  ig::EntityComponentManager &ecm;
+  gs::Joint joint;
+  gs::EntityComponentManager &ecm;
 
   // states
   double pos = std::numeric_limits<double>::quiet_NaN(),
@@ -28,6 +28,6 @@ struct IgnitionJointContext {
          eff_cmd = std::numeric_limits<double>::quiet_NaN();
 };
 
-} // namespace layered_hardware_ign
+} // namespace layered_hardware_gz
 
 #endif

@@ -1,33 +1,33 @@
-#ifndef LAYERED_HARDWARE_IGN_LAYERED_HARDWARE_IGN_HPP
-#define LAYERED_HARDWARE_IGN_LAYERED_HARDWARE_IGN_HPP
+#ifndef LAYERED_HARDWARE_GZ_LAYERED_HARDWARE_GZ_HPP
+#define LAYERED_HARDWARE_GZ_LAYERED_HARDWARE_GZ_HPP
 
 #include <string>
 #include <vector>
 
-#include <ign_ros2_control/ign_system_interface.hpp>
+#include <gz_ros2_control/gz_system_interface.hpp>
 #include <layered_hardware/layer_interface.hpp>
 #include <layered_hardware/layered_hardware.hpp>
-#include <layered_hardware_ign/common_namespaces.hpp>
-#include <layered_hardware_ign/ign_layer_interface.hpp>
-#include <layered_hardware_ign/logging_utils.hpp>
+#include <layered_hardware_gz/common_namespaces.hpp>
+#include <layered_hardware_gz/gz_layer_interface.hpp>
+#include <layered_hardware_gz/logging_utils.hpp>
 #include <pluginlib/class_loader.hpp>
 #include <rclcpp/duration.hpp>
 #include <rclcpp/time.hpp>
 
 #include <yaml-cpp/yaml.h>
 
-#include <ignition/gazebo/System.hh>
+#include <gz/sim/System.hh>
 
-namespace layered_hardware_ign {
+namespace layered_hardware_gz {
 
-class LayeredHardwareIgnition : public ign_ros2_control::IgnitionSystemInterface,
-                                public lh::LayeredHardware {
+class LayeredHardwareGazeboSim : public gz_ros2_control::GazeboSimSystemInterface,
+                                 public lh::LayeredHardware {
 public:
-  LayeredHardwareIgnition()
-      : ign_ros2_control::IgnitionSystemInterface(), lh::LayeredHardware(),
-        ign_layer_loader_("layered_hardware_ign", "layered_hardware_ign::IgnitionLayerInterface") {}
+  LayeredHardwareGazeboSim()
+      : gz_ros2_control::GazeboSimSystemInterface(), lh::LayeredHardware(),
+        gz_layer_loader_("layered_hardware_gz", "layered_hardware_gz::GazeboSimLayerInterface") {}
 
-  virtual ~LayeredHardwareIgnition() {
+  virtual ~LayeredHardwareGazeboSim() {
     // before destructing layer loader,
     // deallocate layers which were created by plugins or loader cannot unload plugins
     layers_.clear();
@@ -35,16 +35,16 @@ public:
 
   // LayeredHardwareGazebo will be initialized via initSim()
 
-  virtual bool initSim(rclcpp::Node::SharedPtr &model_nh, std::map<std::string, ig::Entity> &joints,
-                       const hi::HardwareInfo &hardware_info, ig::EntityComponentManager &_ecm,
-                       int &update_rate) override {
+  virtual bool initSim(rclcpp::Node::SharedPtr &model_nh, std::map<std::string, gs::Entity> &joints,
+                       const hi::HardwareInfo &hardware_info, gs::EntityComponentManager &_ecm,
+                       unsigned int update_rate) override {
     // this function is not defined in ign_ros2_control::IgnitionSystemInterface.
     // so we don't have to call it.
 
     // check if "layers" parameter is given
     const auto layers_param_it = hardware_info.hardware_parameters.find("layers");
     if (layers_param_it == hardware_info.hardware_parameters.end()) {
-      LHI_ERROR("LayeredHardwareIgnition::initSim(): \"layers\" parameter is missing");
+      LHG_ERROR("LayeredHardwareGazeboSim::initSim(): \"layers\" parameter is missing");
       return false;
     }
 
@@ -57,7 +57,7 @@ public:
         layer_types.push_back(layer_param["type"].as<std::string>());
       }
     } catch (const YAML::Exception &error) {
-      LHI_ERROR("LayeredHardwareIgnition::initSim(): %s (on parsing \"layers\" parameter)",
+      LHG_ERROR("LayeredHardwareGazeboSim::initSim(): %s (on parsing \"layers\" parameter)",
                 error.what());
       return false;
     }
@@ -67,49 +67,49 @@ public:
       if (layer_loader_.isClassAvailable(layer_types[i])) {
         // load layer as a normal (non-ignition) layer
         const std::string layer_disp_name =
-            "\"" + layer_names[i] + "\" non-ignition layer (" + layer_types[i] + ")";
-        LHI_INFO("LayeredHardwareIgnition::initSim(): Loading %s", layer_disp_name.c_str());
+            "\"" + layer_names[i] + "\" non-gazebo-sim layer (" + layer_types[i] + ")";
+        LHG_INFO("LayeredHardwareGazeboSim::initSim(): Loading %s", layer_disp_name.c_str());
         std::unique_ptr<lh::LayerInterface> layer;
         try {
           layer.reset(layer_loader_.createUnmanagedInstance(layer_types[i]));
         } catch (const pluginlib::PluginlibException &error) {
-          LHI_ERROR("LayeredHardwareIgnition::initSim(): Failed to create %s: %s",
+          LHG_ERROR("LayeredHardwareGazeboSim::initSim(): Failed to create %s: %s",
                     layer_disp_name.c_str(), error.what());
           return false;
         }
         // initialize layer in normal way
         if (layer->on_init(layer_names[i], hardware_info) != CallbackReturn::SUCCESS) {
-          LHI_ERROR("LayeredHardwareIgnition::initSim(): Failed to initialize %s",
+          LHG_ERROR("LayeredHardwareGazeboSim::initSim(): Failed to initialize %s",
                     layer_disp_name.c_str());
           return false;
         }
         // store successfully-loaded layer
         layers_.push_back(std::move(layer));
-        LHI_INFO("LayeredHardwareIgnition::initSim(): Loaded %s", layer_disp_name.c_str());
-      } else if (ign_layer_loader_.isClassAvailable(layer_types[i])) {
+        LHG_INFO("LayeredHardwareGazeboSim::initSim(): Loaded %s", layer_disp_name.c_str());
+      } else if (gz_layer_loader_.isClassAvailable(layer_types[i])) {
         // load layer as an ignition layer
         const std::string layer_disp_name =
-            "\"" + layer_names[i] + "\" ignition layer (" + layer_types[i] + ")";
-        LHI_INFO("LayeredHardwareIgnition::initSim(): Loading %s", layer_disp_name.c_str());
-        std::unique_ptr<IgnitionLayerInterface> layer;
+            "\"" + layer_names[i] + "\" gazebo-sim layer (" + layer_types[i] + ")";
+        LHG_INFO("LayeredHardwareGazeboSim::initSim(): Loading %s", layer_disp_name.c_str());
+        std::unique_ptr<GazeboSimLayerInterface> layer;
         try {
-          layer.reset(ign_layer_loader_.createUnmanagedInstance(layer_types[i]));
+          layer.reset(gz_layer_loader_.createUnmanagedInstance(layer_types[i]));
         } catch (const pluginlib::PluginlibException &error) {
-          LHI_ERROR("LayeredHardwareIgnition::initSim(): Failed to create %s: %s",
+          LHG_ERROR("LayeredHardwareGazeboSim::initSim(): Failed to create %s: %s",
                     layer_disp_name.c_str(), error.what());
           return false;
         }
         // initialize layer in ignition way
         if (!layer->initSim(layer_names[i], model_nh, joints, hardware_info, _ecm, update_rate)) {
-          LHI_ERROR("LayeredHardwareIgnition::initSim(): Failed to initialize %s",
+          LHG_ERROR("LayeredHardwareGazeboSim::initSim(): Failed to initialize %s",
                     layer_disp_name.c_str());
           return false;
         }
         // store successfully-loaded layer
         layers_.push_back(std::move(layer));
-        LHI_INFO("LayeredHardwareIgnition::initSim(): Loaded %s", layer_disp_name.c_str());
+        LHG_INFO("LayeredHardwareGazeboSim::initSim(): Loaded %s", layer_disp_name.c_str());
       } else {
-        LHI_ERROR("LayeredHardwareIgnition::initSim(): "
+        LHG_ERROR("LayeredHardwareGazeboSim::initSim(): "
                   "Failed to look up \"%s\" (%s) as neither normal nor ignition layers",
                   layer_names[i].c_str(), layer_types[i].c_str());
         return false;
@@ -166,13 +166,13 @@ public:
 protected:
   // hided version of on_init(), which will be never called.
   virtual CallbackReturn on_init(const hi::HardwareInfo &hardware_info) override final {
-    return ign_ros2_control::IgnitionSystemInterface::on_init(hardware_info);
+    return gz_ros2_control::GazeboSimSystemInterface::on_init(hardware_info);
   }
 
 protected:
-  pluginlib::ClassLoader<IgnitionLayerInterface> ign_layer_loader_;
+  pluginlib::ClassLoader<GazeboSimLayerInterface> gz_layer_loader_;
 };
 
-} // namespace layered_hardware_ign
+} // namespace layered_hardware_gz
 
 #endif

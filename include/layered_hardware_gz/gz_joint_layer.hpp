@@ -1,5 +1,5 @@
-#ifndef LAYERED_HARDWARE_IGN_IGN_JOINT_LAYER_HPP
-#define LAYERED_HARDWARE_IGN_IGN_JOINT_LAYER_HPP
+#ifndef LAYERED_HARDWARE_GZ_GZ_JOINT_LAYER_HPP
+#define LAYERED_HARDWARE_GZ_GZ_JOINT_LAYER_HPP
 
 #include <map>
 #include <memory>
@@ -14,28 +14,28 @@
 #include <hardware_interface/types/hardware_interface_return_values.hpp> // for hi::return_type
 #include <layered_hardware/merge_utils.hpp>
 #include <layered_hardware/string_registry.hpp>
-#include <layered_hardware_ign/common_namespaces.hpp>
-#include <layered_hardware_ign/ign_joint_driver.hpp>
-#include <layered_hardware_ign/ign_layer_interface.hpp>
-#include <layered_hardware_ign/logging_utils.hpp>
+#include <layered_hardware_gz/common_namespaces.hpp>
+#include <layered_hardware_gz/gz_joint_driver.hpp>
+#include <layered_hardware_gz/gz_layer_interface.hpp>
+#include <layered_hardware_gz/logging_utils.hpp>
 #include <pluginlib/class_loader.hpp>
 #include <rclcpp/duration.hpp>
 #include <rclcpp/time.hpp>
 
 #include <yaml-cpp/yaml.h>
 
-namespace layered_hardware_ign {
+namespace layered_hardware_gz {
 
-class IgnitionJointLayer : public IgnitionLayerInterface {
+class GazeboSimJointLayer : public GazeboSimLayerInterface {
 public:
   virtual bool initSim(const std::string &layer_name, rclcpp::Node::SharedPtr & /*model_nh*/,
-                       std::map<std::string, ig::Entity> &joint_entities,
-                       const hi::HardwareInfo &hardware_info, ig::EntityComponentManager &ecm,
-                       int & /*update_rate*/) override {
+                       std::map<std::string, gs::Entity> &joint_entities,
+                       const hi::HardwareInfo &hardware_info, gs::EntityComponentManager &ecm,
+                       unsigned int /*update_rate*/) override {
     // find parameter group for this layer
     const auto params_it = hardware_info.hardware_parameters.find(layer_name);
     if (params_it == hardware_info.hardware_parameters.end()) {
-      LHI_ERROR("IgnitionJointLayer::initSim(): \"%s\" parameter is missing", layer_name.c_str());
+      LHG_ERROR("GazeboSimJointLayer::initSim(): \"%s\" parameter is missing", layer_name.c_str());
       return false;
     }
 
@@ -49,25 +49,26 @@ public:
         joint_params.emplace_back(name_param_pair.second);
       }
     } catch (const YAML::Exception &error) {
-      LHI_ERROR("IgnitionJointLayer::initSim(): %s (on parsing \"%s\" parameter)", //
+      LHG_ERROR("GazeboSimJointLayer::initSim(): %s (on parsing \"%s\" parameter)", //
                 error.what(), layer_name.c_str());
       return false;
     }
 
     // find joints in simulator
-    std::vector<ig::Joint> joints;
+    std::vector<gs::Joint> joints;
     for (const auto &name : joint_names) {
       // find joint entity by name
       const auto found_it = joint_entities.find(name);
       if (found_it == joint_entities.end()) {
-        LHI_ERROR("IgnitionJointLayer::initSim(): \"%s\" joint is not a entity", name.c_str());
+        LHG_ERROR("GazeboSimJointLayer::initSim(): \"%s\" joint is not a entity", name.c_str());
         return false;
       }
 
       // validate joint entity
-      const ig::Joint joint(found_it->second);
+      const gs::Joint joint(found_it->second);
       if (!joint.Valid(ecm)) {
-        LHI_ERROR("IgnitionJointLayer::initSim(): \"%s\" joint is an invalid entity", name.c_str());
+        LHG_ERROR("GazeboSimJointLayer::initSim(): \"%s\" joint is an invalid entity",
+                  name.c_str());
         return false;
       }
 
@@ -78,13 +79,13 @@ public:
     for (std::size_t i = 0; i < joint_names.size(); ++i) {
       try {
         drivers_.emplace_back(
-            new IgnitionJointDriver(joint_names[i], joint_params[i], joints[i], ecm));
+            new GazeboSimJointDriver(joint_names[i], joint_params[i], joints[i], ecm));
       } catch (const std::runtime_error &error) {
-        LHI_ERROR("IgnitionJointLayer::initSim(): Failed to create driver for \"%s\" joint: %s",
+        LHG_ERROR("GazeboSimJointLayer::initSim(): Failed to create driver for \"%s\" joint: %s",
                   joint_names[i].c_str(), error.what());
         return false;
       }
-      LHI_INFO("IgnitionJointLayer::initSim(): Initialized \"%s\"", joint_names[i].c_str());
+      LHG_INFO("GazeboSimJointLayer::initSim(): Initialized \"%s\"", joint_names[i].c_str());
     }
 
     return true;
@@ -162,9 +163,9 @@ public:
   }
 
 private:
-  std::vector<std::unique_ptr<IgnitionJointDriver>> drivers_;
+  std::vector<std::unique_ptr<GazeboSimJointDriver>> drivers_;
 };
 
-} // namespace layered_hardware_ign
+} // namespace layered_hardware_gz
 
 #endif

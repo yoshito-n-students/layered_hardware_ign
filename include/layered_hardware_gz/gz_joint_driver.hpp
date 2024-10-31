@@ -1,5 +1,5 @@
-#ifndef LAYERED_HARDWARE_IGN_IGN_JOINT_DRIVER_HPP
-#define LAYERED_HARDWARE_IGN_IGN_JOINT_DRIVER_HPP
+#ifndef LAYERED_HARDWARE_GZ_GZ_JOINT_DRIVER_HPP
+#define LAYERED_HARDWARE_GZ_GZ_JOINT_DRIVER_HPP
 
 #include <memory>
 #include <stdexcept>
@@ -10,27 +10,27 @@
 #include <hardware_interface/types/hardware_interface_return_values.hpp> // for hi::return_type
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
 #include <layered_hardware/string_registry.hpp>
-#include <layered_hardware_ign/common_namespaces.hpp>
-#include <layered_hardware_ign/effort_mode.hpp>
-#include <layered_hardware_ign/ign_joint_context.hpp>
-#include <layered_hardware_ign/logging_utils.hpp>
-#include <layered_hardware_ign/operation_mode_interface.hpp>
-#include <layered_hardware_ign/position_mode.hpp>
-#include <layered_hardware_ign/velocity_mode.hpp>
+#include <layered_hardware_gz/common_namespaces.hpp>
+#include <layered_hardware_gz/effort_mode.hpp>
+#include <layered_hardware_gz/gz_joint_context.hpp>
+#include <layered_hardware_gz/logging_utils.hpp>
+#include <layered_hardware_gz/operation_mode_interface.hpp>
+#include <layered_hardware_gz/position_mode.hpp>
+#include <layered_hardware_gz/velocity_mode.hpp>
 #include <rclcpp/duration.hpp>
 #include <rclcpp/time.hpp>
 
-#include <ignition/gazebo/EntityComponentManager.hh>
-#include <ignition/gazebo/Joint.hh>
+#include <gz/sim/EntityComponentManager.hh>
+#include <gz/sim/Joint.hh>
 
 #include <yaml-cpp/yaml.h>
 
-namespace layered_hardware_ign {
+namespace layered_hardware_gz {
 
-class IgnitionJointDriver {
+class GazeboSimJointDriver {
 public:
-  IgnitionJointDriver(const std::string &name, const YAML::Node &params, const ig::Joint &joint,
-                      ig::EntityComponentManager &ecm) {
+  GazeboSimJointDriver(const std::string &name, const YAML::Node &params, const gs::Joint &joint,
+                       gs::EntityComponentManager &ecm) {
     // parse parameters for this joint
     double initial_position;
     std::vector<std::string> mapped_mode_names;
@@ -54,7 +54,7 @@ public:
     (void)initial_position;
 
     // allocate context for joint
-    context_.reset(new IgnitionJointContext{name, joint, ecm});
+    context_.reset(new GazeboSimJointContext{name, joint, ecm});
 
     // make operating mode map from ros-controller name to dynamixel's operating mode
     for (const auto &mode_name : mapped_mode_names) {
@@ -67,7 +67,7 @@ public:
     }
   }
 
-  virtual ~IgnitionJointDriver() {
+  virtual ~GazeboSimJointDriver() {
     // stop present mode
     switch_operation_modes(/* new_mode = */ nullptr);
   }
@@ -98,7 +98,7 @@ public:
     if (active_bound_ifaces.size() <= 1) {
       return hi::return_type::OK;
     } else { // active_bound_ifaces.size() >= 2
-      LHI_ERROR("IgnitionJointDriver::prepare_command_mode_switch(): "
+      LHG_ERROR("GazeboSimJointDriver::prepare_command_mode_switch(): "
                 "Reject mode switching of \"%s\" actuator "
                 "because %zd bound interfaces are about to be active",
                 context_->name.c_str(), active_bound_ifaces.size());
@@ -110,7 +110,7 @@ public:
     // check how many interfaces associated with actuator command mode are active
     const std::vector<std::size_t> active_bound_ifaces = active_interfaces.find(bound_interfaces_);
     if (active_bound_ifaces.size() >= 2) {
-      LHI_ERROR("IgnitionJointDriver::perform_command_mode_switch(): "
+      LHG_ERROR("GazeboSimJointDriver::perform_command_mode_switch(): "
                 "Could not switch mode of \"%s\" actuator "
                 "because %zd bound interfaces are active",
                 context_->name.c_str(), bound_interfaces_.size());
@@ -160,7 +160,7 @@ private:
     }
     // stop present mode
     if (present_mode_) {
-      LHI_INFO("IgnitionJointDriver::switch_operation_modes(): "
+      LHG_INFO("GazeboSimJointDriver::switch_operation_modes(): "
                "Stopping \"%s\" operation mode for \"%s\" joint",
                present_mode_->get_name().c_str(), context_->name.c_str());
       present_mode_->stopping();
@@ -168,7 +168,7 @@ private:
     }
     // start new mode
     if (new_mode) {
-      LHI_INFO("IgnitionJointDriver::switch_operation_modes(): "
+      LHG_INFO("GazeboSimJointDriver::switch_operation_modes(): "
                "Starting \"%s\" operation mode for \"%s\" joint",
                new_mode->get_name().c_str(), context_->name.c_str());
       new_mode->starting();
@@ -177,7 +177,7 @@ private:
   }
 
 private:
-  std::shared_ptr<IgnitionJointContext> context_;
+  std::shared_ptr<GazeboSimJointContext> context_;
 
   // present operating mode
   std::shared_ptr<OperationModeInterface> present_mode_;
@@ -187,6 +187,6 @@ private:
   std::vector<std::shared_ptr<OperationModeInterface>> mapped_modes_;
 };
 
-} // namespace layered_hardware_ign
+} // namespace layered_hardware_gz
 
 #endif

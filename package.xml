@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>layered_hardware_ign</name>
+  <name>layered_hardware_gz</name>
   <version>0.0.0</version>
-  <description>The layered_hardware_ign package</description>
+  <description>The layered_hardware_gz package</description>
   <maintainer email="okada@rm.is.tohoku.ac.jp">Yoshito Okada</maintainer>
   <license>MIT</license>
 
@@ -11,15 +11,13 @@
 
   <!-- ROS dependencies -->
   <depend>controller_interface</depend>
-  <depend>ign_ros2_control</depend>
+  <depend>gz_ros2_control</depend>
+  <depend>gz_sim_vendor</depend>
   <depend>hardware_interface</depend>
   <depend>layered_hardware</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>yaml_cpp_vendor</depend>
-
-  <!-- System dependencies -->
-  <depend>ignition-gazebo6</depend>
 
   <!-- ROS packages only used in examples -->
   <test_depend>controller_manager</test_depend>

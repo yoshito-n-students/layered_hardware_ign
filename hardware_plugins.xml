@@ -1,10 +1,10 @@
-<library path="layered_hardware_ign_hardware_plugins">
+<library path="layered_hardware_gz_hardware_plugins">
 
-  <class name="layered_hardware_ign/LayeredHardwareIgnition"
-         type="layered_hardware_ign::LayeredHardwareIgnition"
-         base_class_type="ign_ros2_control::IgnitionSystemInterface">
+  <class name="layered_hardware_gz/LayeredHardwareGezeboSim"
+         type="layered_hardware_gz::LayeredHardwareGazeboSim"
+         base_class_type="gz_ros2_control::GazeboSimSystemInterface">
     <description>
-      Hardware layer that handles joints in Ignition simulator
+      Hardware layer that handles joints in Gezebo simulator
     </description>
   </class>  
 
