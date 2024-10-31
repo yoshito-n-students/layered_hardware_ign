@@ -10,7 +10,7 @@
                 - name: joint_limits_layer
                   type: layered_hardware/JointLimitsLayer
                 - name: gz_joint_layer
-                  type: layered_hardware_gz/GazeboJointLayer
+                  type: layered_hardware_gz/GazeboSimJointLayer
             </param>
             <param name="gz_joint_layer">
                 joints:

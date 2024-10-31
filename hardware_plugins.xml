@@ -1,6 +1,6 @@
 <library path="layered_hardware_gz_hardware_plugins">
 
-  <class name="layered_hardware_gz/LayeredHardwareGezeboSim"
+  <class name="layered_hardware_gz/LayeredHardwareGazeboSim"
          type="layered_hardware_gz::LayeredHardwareGazeboSim"
          base_class_type="gz_ros2_control::GazeboSimSystemInterface">
     <description>
