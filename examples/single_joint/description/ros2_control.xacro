@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <robot>
 
-    <ros2_control name="LayeredHardwareIgnition" type="system">
+    <ros2_control name="LayeredHardwareGazeboSim" type="system">
         <hardware>
-            <plugin>layered_hardware_ign/LayeredHardwareIgnition</plugin>
+            <plugin>layered_hardware_gz/LayeredHardwareGazeboSim</plugin>
             <param name="layers">
                 - name: monitor_layer
                   type: layered_hardware/MonitorLayer

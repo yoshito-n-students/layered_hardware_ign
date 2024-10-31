@@ -38,7 +38,7 @@ public:
   virtual bool initSim(rclcpp::Node::SharedPtr &model_nh, std::map<std::string, gs::Entity> &joints,
                        const hi::HardwareInfo &hardware_info, gs::EntityComponentManager &_ecm,
                        unsigned int update_rate) override {
-    // this function is not defined in ign_ros2_control::IgnitionSystemInterface.
+    // this function is not defined in gz_ros2_control::GazeboSimSystemInterface.
     // so we don't have to call it.
 
     // check if "layers" parameter is given
