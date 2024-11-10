@@ -35,7 +35,7 @@ public:
     // find parameter group for this layer
     const auto params_it = hardware_info.hardware_parameters.find(layer_name);
     if (params_it == hardware_info.hardware_parameters.end()) {
-      LHG_ERROR("GazeboSimJointLayer::initSim(): \"%s\" parameter is missing", layer_name.c_str());
+      lhg_error("GazeboSimJointLayer::initSim(): \"%s\" parameter is missing", layer_name);
       return false;
     }
 
@@ -49,8 +49,8 @@ public:
         joint_params.emplace_back(name_param_pair.second);
       }
     } catch (const YAML::Exception &error) {
-      LHG_ERROR("GazeboSimJointLayer::initSim(): %s (on parsing \"%s\" parameter)", //
-                error.what(), layer_name.c_str());
+      lhg_error("GazeboSimJointLayer::initSim(): %s (on parsing \"%s\" parameter)", //
+                error, layer_name);
       return false;
     }
 
@@ -60,15 +60,14 @@ public:
       // find joint entity by name
       const auto found_it = joint_entities.find(name);
       if (found_it == joint_entities.end()) {
-        LHG_ERROR("GazeboSimJointLayer::initSim(): \"%s\" joint is not a entity", name.c_str());
+        lhg_error("GazeboSimJointLayer::initSim(): \"%s\" joint is not a entity", name);
         return false;
       }
 
       // validate joint entity
       const gs::Joint joint(found_it->second);
       if (!joint.Valid(ecm)) {
-        LHG_ERROR("GazeboSimJointLayer::initSim(): \"%s\" joint is an invalid entity",
-                  name.c_str());
+        lhg_error("GazeboSimJointLayer::initSim(): \"%s\" joint is an invalid entity", name);
         return false;
       }
 
@@ -81,11 +80,11 @@ public:
         drivers_.emplace_back(
             new GazeboSimJointDriver(joint_names[i], joint_params[i], joints[i], ecm));
       } catch (const std::runtime_error &error) {
-        LHG_ERROR("GazeboSimJointLayer::initSim(): Failed to create driver for \"%s\" joint: %s",
-                  joint_names[i].c_str(), error.what());
+        lhg_error("GazeboSimJointLayer::initSim(): Failed to create driver for \"%s\" joint: %s",
+                  joint_names[i], error);
         return false;
       }
-      LHG_INFO("GazeboSimJointLayer::initSim(): Initialized \"%s\"", joint_names[i].c_str());
+      lhg_info("GazeboSimJointLayer::initSim(): Initialized \"%s\"", joint_names[i]);
     }
 
     return true;

@@ -98,10 +98,10 @@ public:
     if (active_bound_ifaces.size() <= 1) {
       return hi::return_type::OK;
     } else { // active_bound_ifaces.size() >= 2
-      LHG_ERROR("GazeboSimJointDriver::prepare_command_mode_switch(): "
+      lhg_error("GazeboSimJointDriver::prepare_command_mode_switch(): "
                 "Reject mode switching of \"%s\" actuator "
                 "because %zd bound interfaces are about to be active",
-                context_->name.c_str(), active_bound_ifaces.size());
+                context_->name, active_bound_ifaces.size());
       return hi::return_type::ERROR;
     }
   }
@@ -110,10 +110,10 @@ public:
     // check how many interfaces associated with actuator command mode are active
     const std::vector<std::size_t> active_bound_ifaces = active_interfaces.find(bound_interfaces_);
     if (active_bound_ifaces.size() >= 2) {
-      LHG_ERROR("GazeboSimJointDriver::perform_command_mode_switch(): "
+      lhg_error("GazeboSimJointDriver::perform_command_mode_switch(): "
                 "Could not switch mode of \"%s\" actuator "
                 "because %zd bound interfaces are active",
-                context_->name.c_str(), bound_interfaces_.size());
+                context_->name, bound_interfaces_.size());
       return hi::return_type::ERROR;
     }
 
@@ -160,17 +160,17 @@ private:
     }
     // stop present mode
     if (present_mode_) {
-      LHG_INFO("GazeboSimJointDriver::switch_operation_modes(): "
+      lhg_info("GazeboSimJointDriver::switch_operation_modes(): "
                "Stopping \"%s\" operation mode for \"%s\" joint",
-               present_mode_->get_name().c_str(), context_->name.c_str());
+               present_mode_->get_name(), context_->name);
       present_mode_->stopping();
       present_mode_.reset();
     }
     // start new mode
     if (new_mode) {
-      LHG_INFO("GazeboSimJointDriver::switch_operation_modes(): "
+      lhg_info("GazeboSimJointDriver::switch_operation_modes(): "
                "Starting \"%s\" operation mode for \"%s\" joint",
-               new_mode->get_name().c_str(), context_->name.c_str());
+               new_mode->get_name(), context_->name);
       new_mode->starting();
       present_mode_ = new_mode;
     }

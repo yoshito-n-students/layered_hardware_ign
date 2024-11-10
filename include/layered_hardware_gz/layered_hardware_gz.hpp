@@ -44,7 +44,7 @@ public:
     // check if "layers" parameter is given
     const auto layers_param_it = hardware_info.hardware_parameters.find("layers");
     if (layers_param_it == hardware_info.hardware_parameters.end()) {
-      LHG_ERROR("LayeredHardwareGazeboSim::initSim(): \"layers\" parameter is missing");
+      lhg_error("LayeredHardwareGazeboSim::initSim(): \"layers\" parameter is missing");
       return false;
     }
 
@@ -57,8 +57,7 @@ public:
         layer_types.push_back(layer_param["type"].as<std::string>());
       }
     } catch (const YAML::Exception &error) {
-      LHG_ERROR("LayeredHardwareGazeboSim::initSim(): %s (on parsing \"layers\" parameter)",
-                error.what());
+      lhg_error("LayeredHardwareGazeboSim::initSim(): %s (on parsing \"layers\" parameter)", error);
       return false;
     }
 
@@ -68,50 +67,50 @@ public:
         // load layer as a normal (non-ignition) layer
         const std::string layer_disp_name =
             "\"" + layer_names[i] + "\" non-gazebo-sim layer (" + layer_types[i] + ")";
-        LHG_INFO("LayeredHardwareGazeboSim::initSim(): Loading %s", layer_disp_name.c_str());
+        lhg_info("LayeredHardwareGazeboSim::initSim(): Loading %s", layer_disp_name);
         std::unique_ptr<lh::LayerInterface> layer;
         try {
           layer.reset(layer_loader_.createUnmanagedInstance(layer_types[i]));
         } catch (const pluginlib::PluginlibException &error) {
-          LHG_ERROR("LayeredHardwareGazeboSim::initSim(): Failed to create %s: %s",
-                    layer_disp_name.c_str(), error.what());
+          lhg_error("LayeredHardwareGazeboSim::initSim(): Failed to create %s: %s", //
+                    layer_disp_name, error);
           return false;
         }
         // initialize layer in normal way
         if (layer->on_init(layer_names[i], hardware_info) != CallbackReturn::SUCCESS) {
-          LHG_ERROR("LayeredHardwareGazeboSim::initSim(): Failed to initialize %s",
-                    layer_disp_name.c_str());
+          lhg_error("LayeredHardwareGazeboSim::initSim(): Failed to initialize %s",
+                    layer_disp_name);
           return false;
         }
         // store successfully-loaded layer
         layers_.push_back(std::move(layer));
-        LHG_INFO("LayeredHardwareGazeboSim::initSim(): Loaded %s", layer_disp_name.c_str());
+        lhg_info("LayeredHardwareGazeboSim::initSim(): Loaded %s", layer_disp_name);
       } else if (gz_layer_loader_.isClassAvailable(layer_types[i])) {
         // load layer as an ignition layer
         const std::string layer_disp_name =
             "\"" + layer_names[i] + "\" gazebo-sim layer (" + layer_types[i] + ")";
-        LHG_INFO("LayeredHardwareGazeboSim::initSim(): Loading %s", layer_disp_name.c_str());
+        lhg_info("LayeredHardwareGazeboSim::initSim(): Loading %s", layer_disp_name);
         std::unique_ptr<GazeboSimLayerInterface> layer;
         try {
           layer.reset(gz_layer_loader_.createUnmanagedInstance(layer_types[i]));
         } catch (const pluginlib::PluginlibException &error) {
-          LHG_ERROR("LayeredHardwareGazeboSim::initSim(): Failed to create %s: %s",
-                    layer_disp_name.c_str(), error.what());
+          lhg_error("LayeredHardwareGazeboSim::initSim(): Failed to create %s: %s", //
+                    layer_disp_name, error);
           return false;
         }
         // initialize layer in ignition way
         if (!layer->initSim(layer_names[i], model_nh, joints, hardware_info, _ecm, update_rate)) {
-          LHG_ERROR("LayeredHardwareGazeboSim::initSim(): Failed to initialize %s",
-                    layer_disp_name.c_str());
+          lhg_error("LayeredHardwareGazeboSim::initSim(): Failed to initialize %s",
+                    layer_disp_name);
           return false;
         }
         // store successfully-loaded layer
         layers_.push_back(std::move(layer));
-        LHG_INFO("LayeredHardwareGazeboSim::initSim(): Loaded %s", layer_disp_name.c_str());
+        lhg_info("LayeredHardwareGazeboSim::initSim(): Loaded %s", layer_disp_name);
       } else {
-        LHG_ERROR("LayeredHardwareGazeboSim::initSim(): "
+        lhg_error("LayeredHardwareGazeboSim::initSim(): "
                   "Failed to look up \"%s\" (%s) as neither normal nor ignition layers",
-                  layer_names[i].c_str(), layer_types[i].c_str());
+                  layer_names[i], layer_types[i]);
         return false;
       }
     }

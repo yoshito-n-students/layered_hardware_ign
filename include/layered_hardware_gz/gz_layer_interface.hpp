@@ -26,9 +26,9 @@ protected:
   // disabled version of on_init() for non-gazebo layers
   virtual CallbackReturn on_init(const std::string &layer_name,
                                  const hi::HardwareInfo & /*hardware_info*/) override final {
-    LHG_ERROR("GazebosimLayerInterface::on_init(): \"%s\" initialized as a normal layer. "
+    lhg_error("GazebosimLayerInterface::on_init(): \"%s\" initialized as a normal layer. "
               "Please initialize as an ignition layer using initSim()",
-              layer_name.c_str());
+              layer_name);
     return CallbackReturn::ERROR;
   }
 };
