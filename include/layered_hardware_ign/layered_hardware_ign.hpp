@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <ign_ros2_control/ign_system_interface.hpp>
+#include <gz_ros2_control/gz_system_interface.hpp>
 #include <layered_hardware/layer_interface.hpp>
 #include <layered_hardware/layered_hardware.hpp>
 #include <layered_hardware_ign/common_namespaces.hpp>
@@ -20,11 +20,11 @@
 
 namespace layered_hardware_ign {
 
-class LayeredHardwareIgnition : public ign_ros2_control::IgnitionSystemInterface,
+class LayeredHardwareIgnition : public gz_ros2_control::GazeboSimSystemInterface,
                                 public lh::LayeredHardware {
 public:
   LayeredHardwareIgnition()
-      : ign_ros2_control::IgnitionSystemInterface(), lh::LayeredHardware(),
+      : gz_ros2_control::GazeboSimSystemInterface(), lh::LayeredHardware(),
         ign_layer_loader_("layered_hardware_ign", "layered_hardware_ign::IgnitionLayerInterface") {}
 
   virtual ~LayeredHardwareIgnition() {
@@ -166,7 +166,7 @@ public:
 protected:
   // hided version of on_init(), which will be never called.
   virtual CallbackReturn on_init(const hi::HardwareInfo &hardware_info) override final {
-    return ign_ros2_control::IgnitionSystemInterface::on_init(hardware_info);
+    return gz_ros2_control::GazeboSimSystemInterface::on_init(hardware_info);
   }
 
 protected:

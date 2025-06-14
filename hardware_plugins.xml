@@ -2,7 +2,7 @@
 
   <class name="layered_hardware_ign/LayeredHardwareIgnition"
          type="layered_hardware_ign::LayeredHardwareIgnition"
-         base_class_type="ign_ros2_control::IgnitionSystemInterface">
+         base_class_type="gz_ros2_control::GazeboSimSystemInterface">
     <description>
       Hardware layer that handles joints in Ignition simulator
     </description>

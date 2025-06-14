@@ -1,6 +1,6 @@
-#include <ign_ros2_control/ign_system_interface.hpp>
+#include <gz_ros2_control/gz_system_interface.hpp>
 #include <layered_hardware_ign/layered_hardware_ign.hpp>
 #include <pluginlib/class_list_macros.hpp>
 
 PLUGINLIB_EXPORT_CLASS(layered_hardware_ign::LayeredHardwareIgnition,
-                       ign_ros2_control::IgnitionSystemInterface);
+                       gz_ros2_control::GazeboSimSystemInterface);
